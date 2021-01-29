@@ -16,6 +16,13 @@ Route::get('/', function () {
 });
 
 
+Route::get('/invoice', 'CustomerInvoice@index')->name('profile');
+
+Route::get('/admin/customerinvoice','CustomerInvoice@index');
+
+Route::post('/add/customerinvoice','CustomerInvoice@store');
+
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });

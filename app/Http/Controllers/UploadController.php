@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class Upload extends Controller
+class UploadController extends Controller
 {
     //
 }
