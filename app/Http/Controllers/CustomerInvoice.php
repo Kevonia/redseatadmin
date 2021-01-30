@@ -9,6 +9,7 @@ use LaravelDaily\Invoices\Classes\InvoiceItem;
 use App\User;
 use App\Package;
 use App\Fee;
+use App\Billing;
 
 class CustomerInvoice extends Controller
 {
@@ -84,17 +85,44 @@ class CustomerInvoice extends Controller
         }
 
 
-        if($request->custom_fees!=0){
+        if($request->purchasing_fees!=0){
             $items[2]= (new InvoiceItem())->title("Purchasing Fee")->pricePerUnit($request->purchasing_fees)->quantity(1)->units(1);
         }
-
-
-   
       
+            $billing = Billing::create(
+                    [
+                    'description' => $fee1[0]->name,
+                    'status' => 1,
+                    'value' => $fee1[0]->value_jmd,
+                    'package' => $package[0]->id,
+                ]
+            );
+
+        $billing = Billing::create(
+                [
+                    'description' => 'Custom Duty',
+                    'status' => 1,
+                    'value' => $request->custom_fees,
+                    'package' => $package[0]->id,
+                ],
+        );
+
+        $billing = Billing::create(
+            [
+                'description' => 'Purchasing Fee',
+                'status' => 1,
+                'value' => $request->purchasing_fees,
+                'package' => $package[0]->id,
+            ],
+        );
+
+ 
+
+        
 
         $invoice = Invoice::make('receipt')
             ->series('RSCJA')
-            ->sequence(667)
+            ->sequence($billing->id)
             ->serialNumberFormat('{SERIES}-{SEQUENCE}')
             ->buyer($customer)
             ->date(now()->subWeeks(3))
@@ -104,7 +132,7 @@ class CustomerInvoice extends Controller
             ->currencyFormat('{SYMBOL}{VALUE}')
             ->currencyThousandsSeparator(',')
             ->currencyDecimalPoint('.')
-            ->filename($customer->name.'667')
+            ->filename($customer->name.' '.$billing->id.' '.$package[0]->description)
             ->addItems($items)
 
             ->logo(public_path('vendor/invoices/sample-logo.png'))

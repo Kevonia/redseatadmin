@@ -43,7 +43,7 @@
 
                      <div class="form-group  col-md-12 " data-children-count="1">
                         <label class="control-label" for="name"> custom free </label>
-                        <input required="" type="text" class="form-control" name="custom fees" placeholder="custom fees" value="">
+                        <input required="" type="text" class="form-control" name="custom fees" placeholder="custom fees" value="0">
                      </div>
 
                     
