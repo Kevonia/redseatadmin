@@ -8,6 +8,7 @@ use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use App\User;
 use App\Package;
+use App\Fee;
 
 class CustomerInvoice extends Controller
 {
@@ -53,38 +54,56 @@ class CustomerInvoice extends Controller
      */
     public function store(Request $request)
     {
+       
+  
+
+     
+        $user = User::where('id', '=', $request->user)->get();
+        $package = Package::where('id', '=', $request->package)->get();
+
+        $fee = Fee::where('name','=','Processing Fee')->where('lower_limit','<=',$package[0]->weight)->get();
+
+        $fee1 =Fee::where('name','!=','Processing Fee')->where('lower_limit','<=',$package[0]->weight)->where('upper_limit','>=',$package[0]->weight)->get();
+
+
         
         $customer = new Party([
-            'name'          => 'Ashley Medina',
-            'address'       => 'The Green Street 12',
-            'email'         =>'kevonia123@gmail.com',
-            'code'          => '#22663214',
-            'custom_fields' => [
-                'order number' => '> 654321 <',
-            ],
+            'name'          => $user[0]->name,
+            'email'         =>$user[0]->email,
         ]);
 
+  
+
         $items = [
-            (new InvoiceItem())->title('Red Seat Forwarding - 2')->pricePerUnit(1100),
-            (new InvoiceItem())->title('Service 2')->pricePerUnit(71.96)->quantity(2),
-          
-   
+            (new InvoiceItem())->title($package[0]->description)->pricePerUnit($fee1[0]->value_jmd)->quantity($package[0]->weight)->units($fee[0]->value_jmd),
+      
         ];
 
+        if($request->custom_fees!=0){
+            $items[1]= (new InvoiceItem())->title("Custom Duty")->pricePerUnit($request->custom_fees)->quantity(1)->units(1);
+        }
+
+
+        if($request->custom_fees!=0){
+            $items[2]= (new InvoiceItem())->title("Purchasing Fee")->pricePerUnit($request->purchasing_fees)->quantity(1)->units(1);
+        }
+
+
+   
       
 
         $invoice = Invoice::make('receipt')
-            ->series('BIG')
+            ->series('RSCJA')
             ->sequence(667)
-            ->serialNumberFormat('{SEQUENCE}')
+            ->serialNumberFormat('{SERIES}-{SEQUENCE}')
             ->buyer($customer)
             ->date(now()->subWeeks(3))
             ->dateFormat('m/d/Y')
             ->currencySymbol('$')
             ->currencyCode('USD')
             ->currencyFormat('{SYMBOL}{VALUE}')
-            ->currencyThousandsSeparator('.')
-            ->currencyDecimalPoint(',')
+            ->currencyThousandsSeparator(',')
+            ->currencyDecimalPoint('.')
             ->filename($customer->name.'667')
             ->addItems($items)
 
