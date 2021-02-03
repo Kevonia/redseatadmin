@@ -104,7 +104,7 @@ class CustomerInvoice extends Controller
                     'status' => 1,
                     'value' => $request->custom_fees,
                     'package' => $package[0]->id,
-                ],
+                ]
         );
 
         $billing = Billing::create(
@@ -113,7 +113,7 @@ class CustomerInvoice extends Controller
                 'status' => 1,
                 'value' => $request->purchasing_fees,
                 'package' => $package[0]->id,
-            ],
+            ]
         );
 
  
