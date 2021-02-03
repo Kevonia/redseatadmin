@@ -12,7 +12,7 @@
          <div class="col-md-12">
             <div class="panel panel-bordered">
                <!-- form start -->
-               <form role="form" class="form-edit-add" action="http://localhost:8000/add/customerinvoice" method="POST" enctype="multipart/form-data">
+               <form role="form" class="form-edit-add" action="/add/customerinvoice" method="POST" enctype="multipart/form-data">
                   <!-- PUT Method if we are editing -->
                   <!-- CSRF TOKEN -->
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
