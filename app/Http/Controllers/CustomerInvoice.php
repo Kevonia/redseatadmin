@@ -11,6 +11,8 @@ use App\Package;
 use App\Fee;
 use App\Billing;
 
+use Validator;
+
 class CustomerInvoice extends Controller
 {
     //
@@ -56,6 +58,18 @@ class CustomerInvoice extends Controller
     public function store(Request $request)
     {
        
+
+        $v = Validator::make($request->all(), [
+            'user' => 'required',
+            'package' => 'required',
+            'custom_fees' => 'required',
+            'purchasing_fees' => 'required',
+        ]);
+    
+        if ($v->fails())
+        {
+            return redirect()->back()->withErrors($v->errors());
+        }
   
 
      
@@ -147,6 +161,13 @@ class CustomerInvoice extends Controller
         //
     }
 
+    public function getPackageby($id)
+    {
+        //
+        $Package = Package::where('user_id', '=', $id)->get();
+
+        return  $Package;
+    }
     /**
      * Display the specified resource.
      *
